@@ -1,1 +1,1 @@
-enum CounterEvent { increment, decrement }
+enum CounterEvent { increment, decrement, refresh }

@@ -58,6 +58,13 @@ class CounterPage extends StatelessWidget {
               onPressed: () => counterBloc.add(CounterEvent.decrement),
             ),
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: FloatingActionButton(
+              child: Icon(Icons.refresh),
+              onPressed: () => counterBloc.add(CounterEvent.refresh),
+            ),
+          ),
         ],
       ),
     );
