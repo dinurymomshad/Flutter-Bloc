@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/counter_bloc.dart';
-import 'package:flutterapp/counter_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutterapp/bloc/bloc.dart';
+import 'package:flutterapp/bloc/event.dart';
 
 void main() => runApp(Counter());
 
@@ -9,32 +9,31 @@ class Counter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Counter App",
-      home: CounterPage(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: "Counter App",
+        home: BlocProvider<CounterBloc>(
+          create: (context) => CounterBloc(),
+          child: CounterPage(),
+        ));
   }
 }
 
 class CounterPage extends StatelessWidget {
-  final _bloc = CounterBloc();
-
   @override
   Widget build(BuildContext context) {
+    final CounterBloc counterBloc = BlocProvider.of<CounterBloc>(context);
     return Scaffold(
       appBar: AppBar(title: Text('Counter')),
-      body: Center(
-        child: StreamBuilder(
-          stream: _bloc.counter,
-          initialData: 0,
-          builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-            return Text(
-              'You have pushed the button this many times\n${snapshot.data}',
+      body: BlocBuilder<CounterBloc, int>(
+        builder: (context, count) {
+          return Center(
+            child: Text(
+              'You have pushed the button this many times\n$count',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       floatingActionButton: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -44,18 +43,14 @@ class CounterPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 5.0),
             child: FloatingActionButton(
               child: Icon(Icons.add),
-              onPressed: () {
-                _bloc.counterEventSink.add(IncrementEvent());
-              },
+              onPressed: () => counterBloc.add(CounterEvent.increment),
             ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 5.0),
             child: FloatingActionButton(
               child: Icon(Icons.remove),
-              onPressed: () {
-                _bloc.counterEventSink.add(DecrementEvent());
-              },
+              onPressed: () => counterBloc.add(CounterEvent.decrement),
             ),
           ),
         ],
